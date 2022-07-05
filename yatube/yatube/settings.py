@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -25,13 +25,28 @@ SECRET_KEY = '-f8@hg_j_w-^4t!+xaeig^i#g&t3)0akz%-73jqr@yzg9*(ev%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+    'testserver',
+]
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'posts:index'
+# LOGOUT_REDIRECT_URL = 'posts:index'
+POSTS_PER_PAGE: int = 10
 
+#  подключаем движок filebased.EmailBackend
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# указываем директорию, в которую будут складываться файлы писем
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 # Application definition
 
 INSTALLED_APPS = [
     'posts.apps.PostsConfig',
+    'users.apps.UsersConfig',
+    'core.apps.CoreConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.year.year',
             ],
         },
     },
@@ -105,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 

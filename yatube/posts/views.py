@@ -68,13 +68,6 @@ def post_create(request):
     }
     return render(request, template, context)
 
-# Добавил в контекст 'is_edit': True и проверку на него в шаблоне
-# Сейчас проект отрабатвает корректно. Согласно заданию.
-# Если сделать редирект на вьюху post_create, то будет
-# перенаправление на создание нового поста, что противоречит задаче.
-# И тесты соответственно не пропускают проект.
-
-
 @login_required
 def post_edit(request, post_id):
     post = get_object_or_404(Post, pk=post_id)

@@ -33,10 +33,10 @@
           >Новая запись</a>        
         <li class="nav-item">              
           <a class="nav-link link-light 
-             {% if view_name  == 'users:password_reset_form' %}
+             {% if view_name  == 'users:password_change_form' %}
                active
              {% endif %}"
-             href="{% url 'users:password_reset_form' %}"
+             href="{% url 'users:password_change_form' %}"
           >Изменить пароль</a>
         </li> 
         <li class="nav-item">              
@@ -52,7 +52,7 @@
           active
           {% endif %}"
             href="{% url 'posts:profile' user.username %}"
-            >Пользователь {{username}}</a>
+            >Пользователь:  <span style="color:blue"><strong>{{ user.username }}</strong></span></a>            
         </li>
         {% else %}
         <li class="nav-item">

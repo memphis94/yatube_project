@@ -21,21 +21,19 @@ class PostModelTest(TestCase):
             text='Тестовая пост',
         )
 
-
     def test_models_have_correct_object_names(self):
         """Проверяем, что у моделей корректно работает __str__."""
         group = PostModelTest.group
-        post = PostModelTest.post        
+        post = PostModelTest.post
         expected_group_name = group.title
         expected_post_name = post.text[:15]
         self.assertEqual(expected_group_name, str(group))
         self.assertEqual(expected_post_name, str(post))
 
-
     def test_verbose_name(self):
         """verbose_name в полях совпадает с ожидаемым."""
-        post = PostModelTest.post        
-        
+        post = PostModelTest.post
+
         field_verboses = {
             'text': 'Текст поста',
             'pub_date': 'Дата публикации',
@@ -49,10 +47,10 @@ class PostModelTest(TestCase):
 
     def test_help_text(self):
         """help_text в полях совпадает с ожидаемым."""
-        post = PostModelTest.post        
-        
+        post = PostModelTest.post
+
         field_help_texts = {
-            'text': 'Введите текст поста',            
+            'text': 'Введите текст поста',
             'group': 'Группа, к которой будет относиться пост',
         }
         for field, expected_value in field_help_texts.items():

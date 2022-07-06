@@ -7,6 +7,7 @@ from ..models import Group, Post
 
 User = get_user_model()
 
+
 class PostViewTests(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -27,31 +28,30 @@ class PostViewTests(TestCase):
             group=cls.group,
             text='test_post',
         )
-    
-    def setUp(self):        
-        self.guest_client = Client()        
-        self.user = User.objects.create_user(username='user')        
-        self.authorized_client = Client()        
+
+    def setUp(self):
+        self.guest_client = Client()
+        self.user = User.objects.create_user(username='user')
+        self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
-        self.authorized_author = Client()        
+        self.authorized_author = Client()
         self.authorized_author.force_login(self.author)
 
-   
     def test_pages_uses_correct_template(self):
-        """URL-адрес использует соответствующий шаблон."""        
+        """URL-адрес использует соответствующий шаблон."""
         templates_page_names = {
-            'posts/index.html': reverse('posts:index'),
-            'posts/group_list.html': reverse('posts:group_list', kwargs={'slug': self.group.slug}),
-            'posts/create_post.html': reverse('posts:post_create'),
-            'posts/create_post.html': reverse('posts:post_edit', kwargs={
-                'post_id': self.post.id}),          
-            'posts/post_detail.html': reverse('posts:post_detail', kwargs={
-                'post_id': self.post.id}),
-            'posts/profile.html': (
-                reverse('posts:profile', kwargs={'username': self.author.username})
-            ),
-        }       
-        for template, reverse_name in templates_page_names.items():
+            reverse('posts:index'): 'posts/index.html',
+            reverse('posts:group_list', kwargs={
+                'slug': self.group.slug}): 'posts/group_list.html',
+            reverse('posts:post_create'): 'posts/create_post.html',
+            reverse('posts:post_edit', kwargs={
+                'post_id': self.post.id}): 'posts/create_post.html',
+            reverse('posts:post_detail', kwargs={
+                'post_id': self.post.id}): 'posts/post_detail.html',
+            reverse('posts:profile', kwargs={
+                'username': self.author.username}): 'posts/profile.html',
+        }
+        for reverse_name, template in templates_page_names.items():
             with self.subTest(template=template):
                 response = self.authorized_author.get(reverse_name)
                 self.assertTemplateUsed(response, template)
@@ -104,10 +104,10 @@ class PostViewTests(TestCase):
             'text': forms.fields.CharField,
             'group': forms.models.ModelChoiceField,
         }
-        
+
         for value, expected in form_fields.items():
             with self.subTest(value=value):
-                form_field = response.context.get('form').fields.get(value)                
+                form_field = response.context.get('form').fields.get(value)
                 self.assertIsInstance(form_field, expected)
 
     def test_check_post_on_create(self):
@@ -128,8 +128,9 @@ class PostViewTests(TestCase):
     def test_post_in_group(self):
         """Проверка, что пост не находится в другой группе."""
         response = self.authorized_author.get(
-            reverse('posts:group_list', kwargs={'slug': self.group_2.slug}))        
+            reverse('posts:group_list', kwargs={'slug': self.group_2.slug}))
         self.assertEqual(len(response.context['page_obj']), 0)
+
 
 class PaginatorViewTest(TestCase):
     @classmethod
@@ -150,7 +151,7 @@ class PaginatorViewTest(TestCase):
                 author=cls.author,
                 group=cls.group,
             )
-    
+
     def test_first_page_contains_ten_records(self):
         """Первая страница index содержит десять записей."""
         response = self.authorized_author.get(reverse('posts:index'))
@@ -158,19 +159,22 @@ class PaginatorViewTest(TestCase):
 
     def test_second_page_contains_three_records(self):
         """Вторая страница index содердит три записи."""
-        response = self.authorized_author.get(reverse('posts:index') + '?page=2')
+        response = self.authorized_author.get(
+            reverse('posts:index') + '?page=2')
         self.assertEquals(len(response.context['page_obj']), 3)
 
     def test_group_list_first_page_contains_ten_records(self):
         """Первая страница group_list содержит десять записей.."""
-        response = self.authorized_author.get(reverse('posts:group_list', kwargs={
-            'slug': self.group.slug}))
+        response = self.authorized_author.get(
+            reverse('posts:group_list', kwargs={
+                    'slug': self.group.slug}))
         self.assertEqual(len(response.context['page_obj']), 10)
 
     def test_group_list_second_page_contains_three_records(self):
         """Вторая страница group_list содердит три записи."""
-        response = self.authorized_author.get(reverse('posts:group_list', kwargs={
-        'slug': self.group.slug}) + '?page=2')
+        response = self.authorized_author.get(
+            reverse('posts:group_list', kwargs={
+                    'slug': self.group.slug}) + '?page=2')
         self.assertEqual(len(response.context['page_obj']), 3)
 
     def test_profile_first_page_contains_ten_records(self):
